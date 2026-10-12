@@ -1,0 +1,23 @@
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+:root {
+  color-scheme: light;
+}
+body {
+  background: #f5f7fa;
+  color: #1f2937;
+}
+.app-shell {
+  min-height: 100vh;
+}
+.card {
+  border: 1px solid #e5e7eb;
+  border-radius: 1rem;
+}
+.form-text.error {
+  color: #b42318;
+}
+
+:host {
+  display: block;
+  color: #202938;
+}

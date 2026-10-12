@@ -1,0 +1,92 @@
+<div
+  class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4"
+>
+  <div>
+    <h1 class="h2 mb-1">Application Dashboard</h1>
+    <p class="text-secondary mb-0">
+      Manage, review, and track business applications.
+    </p>
+  </div>
+
+  @if (canOpenEditor()) {
+    <a routerLink="/editor" class="btn btn-primary"> + New Application </a>
+  }
+</div>
+
+@if (loadingUser()) {
+  <div class="text-secondary py-3">Loading user permissions...</div>
+} @else {
+  <app-application-filters
+    [search]="searchInput"
+    [applicationStatus]="statusFilter"
+    [riskStatus]="riskFilter"
+    [disabled]="loading()"
+    (searchChange)="searchInput = $event"
+    (applicationStatusChange)="statusFilter = $event"
+    (riskStatusChange)="riskFilter = $event"
+    (apply)="applyFilters()"
+    (clear)="clearFilters()"
+  />
+
+  @if (error()) {
+    <div
+      class="alert alert-danger d-flex flex-wrap justify-content-between align-items-center gap-2"
+      role="alert"
+    >
+      <span>{{ error() }}</span>
+
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-danger"
+        (click)="loadApplications()"
+        [disabled]="loading()"
+      >
+        Retry
+      </button>
+    </div>
+  }
+
+  @if (successMessage()) {
+    <div
+      class="alert alert-success d-flex justify-content-between align-items-center gap-3"
+      role="status"
+    >
+      <span>{{ successMessage() }}</span>
+
+      <button
+        type="button"
+        class="btn-close"
+        aria-label="Close success message"
+        (click)="dismissSuccessMessage()"
+      ></button>
+    </div>
+  }
+
+  <app-applications-table
+    [applications]="applications()"
+    [role]="role()"
+    [loading]="loading()"
+    [total]="total()"
+    [deletingId]="deletingId()"
+    [revealedContactIds]="revealedContactIds()"
+    (deleteRequested)="openDeleteConfirmation($event)"
+    (contactRevealToggled)="toggleContact($event)"
+  />
+
+  <app-applications-pagination
+    [page]="page()"
+    [limit]="limit()"
+    [totalPages]="totalPages()"
+    [disabled]="loading() || deletingId() !== null"
+    (pageChange)="changePage($event)"
+    (pageSizeChange)="changePageSize($event)"
+  />
+}
+
+<app-delete-confirmation
+  [open]="deleteConfirmationOpen()"
+  [application]="selectedApplication()"
+  [deleting]="deletingId() !== null"
+  (cancel)="cancelDelete()"
+  (confirm)="confirmDelete()"
+/>

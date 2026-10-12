@@ -1,0 +1,68 @@
+<div class="review-page">
+  <app-review-header [application]="application()" />
+
+  @if (loading()) {
+    <div class="message">Loading application details...</div>
+  }
+
+  @if (error()) {
+    <div class="alert error" role="alert">
+      <span>{{ error() }}</span>
+      <button type="button" (click)="error.set('')">Close</button>
+    </div>
+  }
+
+  @if (success()) {
+    <div class="alert success" role="status">
+      <span>{{ success() }}</span>
+      <button type="button" (click)="success.set('')">Close</button>
+    </div>
+  }
+
+  @if (application(); as app) {
+    <div class="content-grid">
+      <main class="application-content">
+        <app-application-details [application]="app" />
+
+        <app-review-history
+          [reviews]="reviews()"
+          [loadingReviews]="loadingReviews()"
+          (refresh)="loadReviews()"
+        />
+      </main>
+
+      <aside class="review-sidebar">
+        @if (currentUser()?.role === 'ADMIN') {
+          <app-reviewer-assignment
+            [application]="app"
+            [reviewers]="reviewers()"
+            [assignmentForm]="assignmentForm"
+            [loadingReviewers]="loadingReviewers()"
+            [savingAssignment]="savingAssignment()"
+            [unchanged]="selectedReviewerUnchanged()"
+            (submitAssignment)="reassignReviewer()"
+          />
+        }
+
+        @if (currentUser()?.role !== 'ADMIN') {
+          <app-review-decision
+            [reviewForm]="reviewForm"
+            [canReview]="canReview()"
+            [submitting]="submitting()"
+            [loading]="loading()"
+            (submitDecision)="submitReview()"
+          />
+        }
+      </aside>
+    </div>
+  }
+
+  <app-confirmation-modal
+    [visible]="showConfirmModal()"
+    [title]="confirmTitle()"
+    [message]="confirmMessage()"
+    [busy]="savingAssignment() || submitting()"
+    (cancel)="cancelConfirmation()"
+    (confirm)="confirmActionNow()"
+  />
+</div>

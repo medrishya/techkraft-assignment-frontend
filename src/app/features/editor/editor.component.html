@@ -1,0 +1,84 @@
+<section class="editor">
+  <header class="editor-header">
+    <div>
+      <h2>{{ mode === 'add' ? 'Add Merchant' : 'Edit Merchant' }}</h2>
+      <p class="muted">Step {{ currentStep + 1 }} of {{ totalSteps }}</p>
+    </div>
+
+    <button
+      type="button"
+      class="button secondary"
+      (click)="close()"
+      [disabled]="saving"
+    >
+      Close
+    </button>
+  </header>
+
+  @if (loading) {
+    <p class="muted">Loading application...</p>
+  } @else {
+    @if (errorMessage) {
+      <div class="error-message" role="alert">
+        {{ errorMessage }}
+      </div>
+    }
+
+    @if (successMessage) {
+      <div class="success-message" role="status">
+        {{ successMessage }}
+      </div>
+    }
+
+    <div class="auto-save-status" aria-live="polite">
+      @if (autoSaveStatus === 'saving') {
+        <span class="muted">Saving draft automatically...</span>
+      } @else if (autoSaveStatus === 'saved') {
+        <span class="auto-save-success">
+          <span class="status-dot"></span>
+          Draft saved automatically
+        </span>
+      } @else if (autoSaveStatus === 'error') {
+        <div class="auto-save-error">
+          <span>{{ autoSaveError }}</span>
+          <button
+            type="button"
+            class="retry-button"
+            (click)="retryAutoSave()"
+            [disabled]="saving"
+          >
+            Retry
+          </button>
+        </div>
+      }
+    </div>
+
+    <app-editor-progress [steps]="steps" [currentStep]="currentStep" />
+
+    <form class="editor-form" [formGroup]="form" (ngSubmit)="submit()">
+      @if (currentStep === 0) {
+        <app-business-step [form]="form" [businessTypes]="businessTypes" />
+      } @else if (currentStep === 1) {
+        <app-owner-processing-step [form]="form" [currencies]="currencies" />
+      } @else if (currentStep === 2) {
+        <app-review-step
+          [form]="form"
+          [reviewers]="reviewers()"
+          [canManageStatus]="canManageStatus()"
+          [canAssignReviewer]="canAssignReviewer()"
+          [applicationStatuses]="applicationStatuses"
+          [riskStatuses]="riskStatuses"
+        />
+      }
+
+      <app-editor-actions
+        [currentStep]="currentStep"
+        [totalSteps]="totalSteps"
+        [saving]="saving"
+        [mode]="mode"
+        (previous)="previousStep()"
+        (next)="nextStep()"
+      />
+    </form>
+  }
+</section>

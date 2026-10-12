@@ -1,0 +1,39 @@
+.button {
+  padding: 9px 14px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.primary {
+  color: white;
+  background: #2563eb;
+}
+
+.secondary {
+  color: #374151;
+  background: white;
+  border-color: #d1d5db;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.right-actions {
+  display: flex;
+  gap: 0.5rem;
+}
