@@ -10,7 +10,9 @@ import { AuthService } from './core/auth.service';
     <div class="app-shell">
       <nav class="navbar navbar-expand bg-white border-bottom">
         <div class="container">
-          <a class="navbar-brand fw-semibold" routerLink="/">Angular Starter</a>
+          <a class="navbar-brand fw-semibold" routerLink="/"
+            >Techkraft Inc Angular Assignment</a
+          >
           <div class="d-flex align-items-center gap-3">
             @if (auth.isAuthenticated()) {
               <a routerLink="/dashboard" class="nav-link">Dashboard</a>
