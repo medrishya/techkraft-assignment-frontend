@@ -553,14 +553,14 @@ function getSalesStatusError(role, body) {
     Object.hasOwn(body, 'application_status') &&
     body.application_status !== SALES_APPLICATION_STATUS
   ) {
-    return 'Sales users can only set application_status to DRAFT.';
+    return 'Sales users can only set application status to DRAFT.';
   }
 
   if (
     Object.hasOwn(body, 'risk_status') &&
     body.risk_status !== SALES_RISK_STATUS
   ) {
-    return 'Sales users can only set risk_status to PENDING.';
+    return 'Sales users can only set risk status to PENDING.';
   }
 
   return null;
@@ -970,16 +970,19 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (role !== 'ADMIN' && Object.hasOwn(body, 'reviewer_id')) {
-      return send(res, 403, {
-        message: 'Only admins can assign reviewers.',
-      });
+      delete body.reviewer_id;
+
+      // return send(res, 403, {
+      //   message: 'Only admins can assign reviewers.',
+      // });
     }
 
     validateReviewerAssignment(body, role, errors);
 
     if (Object.keys(errors).length > 0) {
       return send(res, 400, {
-        message: 'Application validation failed.',
+        message:
+          'Application validation failed. Please enter at least business name and business type.',
         errors,
       });
     }
@@ -1116,16 +1119,18 @@ const server = http.createServer(async (req, res) => {
       return send(res, 403, { message: salesStatusError });
     }
 
-    const assignmentRequested = Object.hasOwn(body, 'reviewer_id');
+    if (Object.hasOwn(body, 'reviewer_id') && role === 'SALES') {
+      delete body.reviewer_id;
+    }
 
-    if (assignmentRequested && role !== 'ADMIN') {
+    if (Object.hasOwn(body, 'reviewer_id') && role !== 'ADMIN') {
       return send(res, 403, {
         message: 'Only admins can assign reviewers.',
       });
     }
 
+    const assignmentRequested = Object.hasOwn(body, 'reviewer_id');
     const forbiddenFields = [
-      'id',
       'created_by_id',
       'created_by_name',
       'created_at',

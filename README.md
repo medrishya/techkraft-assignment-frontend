@@ -24,3 +24,7 @@ Open http://localhost:4200.
 ```bash
 npm test
 ```
+
+## Mock Login Details
+
+-For mock login details - please look at mock-api/server.mjs and check ACCOUNTS variable.
